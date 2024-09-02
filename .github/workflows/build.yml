@@ -144,22 +144,28 @@ jobs:
 
           cat arch/${{ env.arch }}/configs/${{ env.DEFCONFIG_NAME }}
 
-      - name: "👍 Make defconfig"
-        working-directory: ${{ env.KERNEL_NAME }}
-        env:
-          args: ${{ steps.generate-args.outputs.args }}
-          arch: ${{ steps.generate-args.outputs.ARCH }}
-        run: |
-          echo "PATH Variable: $PATH"
-          make ${{ env.args }} ${{ env.DEFCONFIG_NAME }}
+      # - name: "👍 Make defconfig"
+      #   working-directory: ${{ env.KERNEL_NAME }}
+      #   env:
+      #     args: ${{ steps.generate-args.outputs.args }}
+      #     arch: ${{ steps.generate-args.outputs.ARCH }}
+      #   run: |
+      #     echo "PATH Variable: $PATH"
+      #     make ${{ env.args }} ${{ env.DEFCONFIG_NAME }}
 
-      - name: "🎶 Build kernel"
+      # - name: "🎶 Build kernel"
+      #   working-directory: ${{ env.KERNEL_NAME }}
+      #   env:
+      #     args: ${{ steps.generate-args.outputs.args }}
+      #   run: |
+      #     echo "PATH Variable: $PATH"
+      #     make ${args}
+
+      - name: "🔨 Build the kernel"
         working-directory: ${{ env.KERNEL_NAME }}
-        env:
-          args: ${{ steps.generate-args.outputs.args }}
         run: |
-          echo "PATH Variable: $PATH"
-          make ${args}
+          make ${{ env.args }} olddefconfig  # 使用旧的配置文件进行验证
+          make ${{ env.args }} -j$(nproc)
 
       - name: "💛 Upload Image"
         uses: actions/upload-artifact@v3
